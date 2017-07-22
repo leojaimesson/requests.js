@@ -1,6 +1,10 @@
 ;(function(root, factory) {
 	'use strict'
-	if (typeof exports === 'object') {
+
+	if (typeof define === 'function' && define.amd) {
+    	define('request', factory)
+  	} 
+	else if (typeof exports === 'object') {
     	exports = module.exports = factory()
   	} 
   	else {
@@ -10,7 +14,9 @@
 })(this, function() {
 	'use strict'
 
-	function response(xhr) {
+	var _options = _filterOptions({});
+
+	function _response(xhr) {
 		return {
 			status : xhr.status,
         	ok : (xhr.status >= 200 && xhr.status < 300),
@@ -21,14 +27,16 @@
 		}
 	}
 
-	function addHeaders(xhr, headers) {
+	function _hasContentType(headers) {
+		return Object.keys(headers).some(function(header) {
+			return header == 'content-type';
+		});
+	}
+
+	function _addHeaders(xhr, headers) {
 		headers = headers || {};
 
-		var hasContentType = Object.keys(headers).some(function(header) {
-			return header == 'content-type';
-		})
-
-		if(!hasContentType){
+		if(!_hasContentType(headers)){
 			xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
 		}
 
@@ -37,33 +45,18 @@
 		});
 	}
 
-	function encode(data) {
-		return Object.keys(data).reduce(function(prev, item){
-			return (!prev ? '' : prev + '&') + encodeURIComponent(item) + '=' + encodeURIComponent(data[item]);
-		}, '');
-	}
-
-	function isObject(data) {
-		return typeof(data) === 'object' || Object.prototype.toString.call(data) === '[object Object]';
-	}
-
-	function dataPreProcess(rawData) {
-		return isObject(rawData) ? encode(rawData) : rawData;
-	}
-
-	function xhr_connect(method, url, data, options) {
-		
+	function _xhr_connect(method, url, data, options) {
 		return new Promise(function(resolve, reject) {		
 			var xhr = new XMLHttpRequest();
 			xhr.open(method, url, true);
 			xhr.withCredentials = options.credentials ? options.credentials : false;
-			addHeaders(xhr, options.headers);
+			_addHeaders(xhr, options.headers);
 			xhr.timeout = options.timeout || 0;
 			xhr.onload = function() {
 				if(xhr.status >= 200 && xhr.status < 300) {
-                    resolve(response(xhr))
+                    resolve(_response(xhr))
                 }else{
-                    reject(response(xhr));
+                    reject(_response(xhr));
                 }
 			}
 			xhr.onerror = function() {
@@ -73,31 +66,62 @@
                 reject(new TypeError("Network request failed."));
             }
 			try{
-				xhr.send(dataPreProcess(data) || null);
+				xhr.send(data || null);
 			} catch(e) {
 				reject(new TypeError("Given is invalid, it is necessary to be a string in json format."));
 			}
 		})
 	}
 
-	function filterOptions(options) {
+	function _filterOptions(options) {
 		return {
 			credentials : options.credentials ? 1 : 0, //se não for undefined ou null retorna 0  senão 1
-			urlBase : options.urlBase || '',
+			baseURL : options.baseURL || '',
 			timeout : options.timeout || 0,
 			headers : options.headers || {}
 		}
 	}
 
-	function send(options) {
-		return xhr_connect(options.method, request.options.urlBase + options.url, options.data, options);
+	function _send(options) {
+		return _xhr_connect(options.method, _options.baseURL + options.url, options.data, _filterOptions(options));
+	}
+
+	function _isObject(data) {
+		return typeof(data) === 'object' || Object.prototype.toString.call(data) === '[object Object]';
+	}
+
+	function _preProcess(rawData , callback) {
+		return _isObject(rawData) ? callback(rawData) : rawData;
+	}
+
+	function _encode(data) {
+		return Object.keys(data).reduce(function(prev, item){
+			return (!prev ? '' : prev + '&') + encodeURIComponent(item) + '=' + encodeURIComponent(data[item]);
+		}, '');
+	}
+
+	function _json(data) {
+		return JSON.stringify(data);
+	}
+
+	function _configure(options) {
+		_options = _filterOptions(options);
 	}
 
 	function request(options) {
-		if(options) {
-			request.options = filterOptions(options);
-		}
-		return send(options);
+		return _send(options);
+	}
+
+	request.encode = function(rawData) {
+		return _preProcess(rawData, _encode);
+	}
+
+	request.json = function(rawData) {
+		return _preProcess(rawData, _json);
+	}
+
+	request.configure = function(options) {
+		_configure(options);
 	}
 
 	return request;
