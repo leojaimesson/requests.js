@@ -1,4 +1,4 @@
-# Request.js
+# xhreq.js
 
 Uma simples API de requição ajax.
 

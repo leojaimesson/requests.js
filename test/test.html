@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script src="../src/xhreq.js"></script>
+
+    <script>
+        xhreq({
+            method : 'delete',
+            url : 'http://rest.learncode.academy/api/leo/teste/5975075b5edc57010055a53b',
+            data : xhreq.encode({
+                name : 'leo jaimesson',
+                emails : {
+                    email1 : 'leo.teste@gmail.com',
+                    email2 : 'leo@outlook.com'
+                }
+            })
+        }).then(
+            function (data) {
+                console.log(data);
+            },
+            function (error) {
+                console.error(error);
+            }
+        )
+
+        xhreq({
+            method : 'get',
+            url : 'http://rest.learncode.academy/api/leo/teste'
+        }).then(
+            function (data) {
+                console.log(data);
+            },
+            function (error) {
+                console.error(error);
+            }
+        )
+    </script>
+</body>
+</html>
