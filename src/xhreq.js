@@ -16,6 +16,53 @@
 
 	var _options = _filterOptions({});
 
+	/**
+	*===============================================================================
+	* lib - uricomp
+	* @version v1.0.0
+	* @link https://github.com/leojaimesson/encodecomponent#readme
+	* @license MIT
+	* @author Leo Jaimesson
+	* ===============================================================================
+	*/
+	
+	function _encodeURI(value) {
+		return encodeURIComponent(value);
+	}
+
+	function _buildCodeSubObjects(prefix, object) {
+		var prefixList = prefix.split(',');
+		return Object.keys(object).reduce(function(acc, item) {
+			if(_isObject(object[item])){
+	 			return acc + _buildCodeSubObjects((prefix + ',' + item) , object[item]);
+			}
+	 		var pre = prefixList.reduce(function(acc , item) {
+	 			return acc.length > 0 ? acc + _encodeURI(item) + _encodeURI(']') + _encodeURI('[') : acc + _encodeURI(item) + _encodeURI('[');
+	 		}, '');
+
+			return acc + pre + _encodeURI(item) + _encodeURI(']') + '=' + _encodeURI(object[item]) +'&';
+		},'');
+	}
+
+	function _buildCode(object) {
+			return Object.keys(object).reduce(function(prev, item){
+				if(_isObject(object[item])){
+					var result = _buildCodeSubObjects(item, object[item]).split('');
+					return prev + '&' + result.slice(0, result.length-1).join('');
+				}
+				return (!prev ? '' : prev + '&') + _encodeURI(item) + '=' + _encodeURI(object[item]);
+			}, '');
+		}
+
+	function _objectToQueryString(object) {
+		return _isObject(object) ? _buildCode(object) : object;
+	}
+
+	/**
+	*===================================================================================
+	*===================================================================================
+	*/ 
+
 	function _response(xhr) {
 		return {
 			status : xhr.status,
@@ -29,7 +76,7 @@
 
 	function _hasContentType(headers) {
 		return Object.keys(headers).some(function(header) {
-			return header == 'content-type';
+			return header.toLowerCase() === 'content-type';
 		});
 	}
 
@@ -90,64 +137,8 @@
 		return typeof(data) === 'object' || Object.prototype.toString.call(data) === '[object Object]';
 	}
 
-	function _preProcess(rawData , callback) {
-		return _isObject(rawData) ? callback(rawData) : rawData;
-	}
-
-
-	/**
-	*===============================================================================
-	* lib - uricomp
-	* @version v1.0.0
-	* @link https://github.com/leojaimesson/encodecomponent#readme
-	* @license MIT
-	* @author Leo Jaimesson
-	* ===============================================================================
-	*/
-	
-	function _encodeURI(value) {
-		return encodeURIComponent(value);
-	}
-
-	function _buildCodeSubObjects(prefix, object) {
-		var prefixList = prefix.split(',');
-		return Object.keys(object).reduce(function(acc, item) {
-			if(_isObject(object[item])){
-	 			return acc + _buildCodeSubObjects((prefix + ',' + item) , object[item]);
-			}
-	 		var pre = prefixList.reduce(function(acc , item) {
-	 			return acc.length > 0 ? acc + _encodeURI(item) + _encodeURI(']') + _encodeURI('[') : acc + _encodeURI(item) + _encodeURI('[');
-	 		}, '');
-
-			return acc + pre + _encodeURI(item) + _encodeURI(']') + '=' + _encodeURI(object[item]) +'&';
-		},'');
-	}
-
-	function _buildCode(object) {
-			return Object.keys(object).reduce(function(prev, item){
-				if(_isObject(object[item])){
-					var result = _buildCodeSubObjects(item, object[item]).split('');
-					return prev + '&' + result.slice(0, result.length-1).join('');
-				}
-				return (!prev ? '' : prev + '&') + _encodeURI(item) + '=' + _encodeURI(object[item]);
-			}, '');
-		}
-
-	function _objectToQueryString(object) {
-		return _isObject(object) ? _buildCode(object) : object;
-	}
-
-	/**
-	*===================================================================================
-	*===================================================================================
-	*/ 
-
 	function _encode(obj) {
-		return _objectToQueryString(obj);
-	}
-
-	function _json(data) {
-		return JSON.stringify(data);
+		return _isObject(obj) ? _objectToQueryString(obj) : obj;
 	}
 
 	function _configure(options) {
@@ -159,11 +150,7 @@
 	}
 
 	xhreq.encode = function(rawData) {
-		return _preProcess(rawData, _encode);
-	}
-
-	xhreq.json = function(rawData) {
-		return _preProcess(rawData, _json);
+		return _encode(rawData);
 	}
 
 	xhreq.configure = function(options) {
