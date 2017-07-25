@@ -16,6 +16,8 @@
 
 	var _options = _filterOptions({});
 
+	var methods = ['get', 'put', 'post', 'head', 'delete'];
+
 	/**
 	*===============================================================================
 	* lib - uricomp
@@ -156,6 +158,13 @@
 	xhreq.configure = function(options) {
 		_configure(options);
 	}
+
+	//add métodos get, put, post, delete, head
+	methods.forEach(function(value) {
+		xhreq[value] = function(url, data) {
+			return _xhr_connect(value, _options.baseURL + url, data, _filterOptions(_options));
+		}
+	});
 
 	return xhreq;
 });

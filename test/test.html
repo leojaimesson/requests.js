@@ -10,16 +10,16 @@
     <script src="../src/xhreq.js"></script>
 
     <script>
+        xhreq.configure({
+            baseURL : 'http://rest.learncode.academy',
+            headers : {
+                "Content-Type": "application/json"
+            }
+        })
+
         xhreq({
-            method : 'delete',
-            url : 'http://rest.learncode.academy/api/leo/teste/5975075b5edc57010055a53b',
-            data : xhreq.encode({
-                name : 'leo jaimesson',
-                emails : {
-                    email1 : 'leo.teste@gmail.com',
-                    email2 : 'leo@outlook.com'
-                }
-            })
+            method : 'get',
+            url : '/api/leo/teste'
         }).then(
             function (data) {
                 console.log(data);
@@ -29,17 +29,17 @@
             }
         )
 
-        xhreq({
-            method : 'get',
-            url : 'http://rest.learncode.academy/api/leo/teste'
-        }).then(
-            function (data) {
+        xhreq.get('/api/leo/teste').then(
+            function(data) {
                 console.log(data);
-            },
-            function (error) {
+            }
+        ).catch(
+            function(error) {
                 console.error(error);
             }
-        )
+        );
+
+
     </script>
 </body>
 </html>
