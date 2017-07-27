@@ -18,8 +18,11 @@
         })
 
         xhreq({
-            method : 'get',
-            url : '/api/leo/teste'
+            method : 'post',
+            url : '/api/leo/teste',
+            data: {
+                'teste' : 'teste'
+            }
         }).then(
             function (data) {
                 console.log(data);
@@ -29,15 +32,16 @@
             }
         )
 
-        xhreq.get('/api/leo/teste').then(
-            function(data) {
-                console.log(data);
-            }
-        ).catch(
-            function(error) {
-                console.error(error);
-            }
-        );
+        // xhreq.get('/api/leo/teste').then(
+        //     function(data) {
+        //         console.log(data);
+        //     }
+        // ).catch(
+        //     function(error) {
+        //         console.error(error);
+        //     }
+        // );
+
 
 
     </script>
