@@ -1,0 +1,33 @@
+{
+  "name": "xhreq",
+  "version": "0.1.0",
+  "description": "Uma simples biblioteca de requisição ajax para transmissão e recpção de urlencoded e json usando xhr em vanilla js.",
+  "main": "src/xhre.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leojaimesson/xhreq.git"
+  },
+  "keywords": [
+    "xhr",
+    "ajax",
+    "http"
+  ],
+  "author": "Leo Jaimesson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/leojaimesson/xhreq/issues"
+  },
+  "homepage": "https://github.com/leojaimesson/xhreq#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-header": "^1.8.9",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^3.0.0"
+  }
+}

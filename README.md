@@ -1,6 +1,6 @@
 # xhreq.js
 
-Uma simples API de requição ajax.
+Uma simples biblioteca de requisição ajax para transmissão e recpção de urlencoded e json usando xhr em vanilla js.
 
 ### Assinatura
 
