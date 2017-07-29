@@ -83,6 +83,21 @@ xhreq.post('/api/teste', {
 });
 ```
 
+---
+
+**Resposta**
+
+```js
+{
+    status : [Number],
+    ok : [Boolean],
+    statusText : [String],
+    headers : [String],
+    url : [String],
+    body : [String]
+}
+```
+
 ### Retorno de Método
 
 Retorna [Promises](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Promis).
